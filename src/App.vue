@@ -1,23 +1,34 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from "vue-router";
-import HelloWorld from "@/components/HelloWorld.vue";
-import { useUser } from "@/composables/useUser";
-import { useCart } from "./composables/useCart";
+import { RouterLink, RouterView } from 'vue-router';
+import HelloWorld from '@/components/HelloWorld.vue';
+import { useUser } from '@/composables/useUser';
+import { useCart } from './composables/useCart';
+import { ref } from 'vue';
+import SonView from './views/SonView.vue';
+import { useObserver } from './composables/eventBus/sub';
 
 const { loggedIn, user, logout } = useUser();
 const { totalProducts } = useCart();
+// const day = Date.now();
+// console.log(day);
+// const count = ref('');
+// console.log(count);
+const n = ref<number>(0);
+const getNum = (num: number) => {
+  n.value = num;
+};
+const { sub } = useObserver();
+sub.value.on('test', (string) => {
+  console.log(string.value);
+});
 </script>
 
 <template>
   <header>
-    <img
-      alt="Vue logo"
-      class="logo"
-      src="@/assets/logo.svg"
-      width="125"
-      height="125"
-    />
-
+    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+    <!-- <button @some-event="(n:string)=>count+= n">点击</button> -->
+    <span>{{ n }}</span>
+    <SonView @getnum="getNum"></SonView>
     <div class="wrapper">
       <!-- <HelloWorld msg="You did it!" /> -->
 
@@ -25,11 +36,17 @@ const { totalProducts } = useCart();
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
         <RouterLink to="/products">Products</RouterLink>
-        <RouterLink to="/cart">My Cart({{totalProducts}})</RouterLink>
-        <RouterLink to="/login" v-if="!loggedIn">Login</RouterLink>
-        <RouterLink to="/login" v-if="loggedIn" @click="logout"
-          >Logout ({{ user.username }})</RouterLink
+        <RouterLink
+          :to="{
+            path: '/cart',
+            query: {
+              id: '123',
+            },
+          }"
+          >My Cart({{ totalProducts }})</RouterLink
         >
+        <RouterLink to="/login" v-if="!loggedIn">Login</RouterLink>
+        <RouterLink to="/login" v-if="loggedIn" @click="logout">Logout ({{ user.username }})</RouterLink>
       </nav>
     </div>
   </header>
@@ -38,8 +55,8 @@ const { totalProducts } = useCart();
 </template>
 
 <style>
-@import "@/assets/base.css";
-
+@import '@/assets/base.css';
+@import 'normalize.css';
 #app {
   max-width: 1280px;
   margin: 0 auto;

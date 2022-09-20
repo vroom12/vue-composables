@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { ElMessage } from "element-plus";
-import { useUser } from "@/composables/useUser";
+import { ref, computed, getCurrentInstance, onMounted } from 'vue';
+import { ElMessage } from 'element-plus';
+import { useUser } from '@/composables/useUser';
 
 const { loggedIn, login, loginModel, logout, user } = useUser();
+const vc = getCurrentInstance();
+console.log(vc);
 </script>
 <template>
   <div class="about">
@@ -12,19 +14,12 @@ const { loggedIn, login, loginModel, logout, user } = useUser();
       Welcome {{ user?.username }},
       <a href="#" @click.prevent="logout">Logout</a>
     </p>
-    <el-form v-if="!loggedIn" ref="form" :model="loginModel" label-width="80px">
+    <el-form v-bind="$attrs" v-if="!loggedIn" ref="form" :model="loginModel" label-width="80px">
       <el-form-item label="Username">
-        <el-input
-          v-model="loginModel.username"
-          placeholder="Username"
-        ></el-input>
+        <el-input v-model="loginModel.username" placeholder="Username"></el-input>
       </el-form-item>
       <el-form-item label="Password">
-        <el-input
-          v-model="loginModel.password"
-          type="password"
-          placeholder="Password"
-        ></el-input>
+        <el-input v-model="loginModel.password" type="password" placeholder="Password"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="login">Login</el-button>
